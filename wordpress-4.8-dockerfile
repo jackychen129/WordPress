@@ -15,6 +15,7 @@ RUN apt-get update && \
 
 # Clone the repository from GitHub
 RUN git clone -b 4.8-branch https://github.com/jackychen129/WordPress.git /var/www/html
+    chown -R www-data:www-data /var/www/html/wordpress
 
 # Configure Apache to use the cloned repo directory as the document root
 RUN sed -i 's!/var/www/html!/var/www/html/wordpress!g' /etc/apache2/sites-available/000-default.conf && \
