@@ -1,9 +1,12 @@
-# Use an appropriate base image
+# Use the official PHP 7.2 image as the base image
 FROM php:7.2-apache
 
-# Install any necessary dependencies
+# Set the working directory to /var/www/html
+WORKDIR /var/www/html
+
+# Install the necessary packages
 RUN apt-get update && \
-    apt-get install -y git \
+    apt-get install -y \
     libjpeg-dev \
     libpng-dev \
     libfreetype6-dev \
@@ -13,16 +16,17 @@ RUN apt-get update && \
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
     docker-php-ext-install -j$(nproc) gd mysqli zip
 
-# Clone the repository from GitHub
-RUN git clone -b 4.8-branch https://github.com/jackychen129/WordPress.git /var/www/html
+# Download and extract WordPress 4.8
+RUN curl -O https://wordpress.org/wordpress-4.8.tar.gz && \
+    tar -xzvf wordpress-4.8.tar.gz && \
+    rm -rf wordpress-4.8.tar.gz && \
+    chown -R www-data:www-data /var/www/html/wordpress
 
-RUN chown -R www-data:www-data /var/www/html/wordpress
-
-# Configure Apache to use the cloned repo directory as the document root
+# Configure Apache to use the WordPress directory as the document root
 RUN sed -i 's!/var/www/html!/var/www/html/wordpress!g' /etc/apache2/sites-available/000-default.conf && \
     sed -i 's!/var/www/!/var/www/html/wordpress!g' /etc/apache2/apache2.conf
 
-# Expose any necessary ports
+# Expose port 80
 EXPOSE 80
 
 # Start Apache
