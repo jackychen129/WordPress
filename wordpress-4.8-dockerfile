@@ -14,7 +14,7 @@ RUN apt-get update && \
     docker-php-ext-install -j$(nproc) gd mysqli zip
 
 # Clone the repository from GitHub
-RUN git clone -b 4.8-branch https://github.com/jackychen129/WordPress.git /var/www/html
+RUN git clone -b 4.8-branch https://github.com/jackychen129/WordPress.git /var/www/html && \
     chown -R www-data:www-data /var/www/html/wordpress
 
 # Configure Apache to use the cloned repo directory as the document root
